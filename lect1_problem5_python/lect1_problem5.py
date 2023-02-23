@@ -8,19 +8,22 @@ c = 0
 print("=================================================================")
 print("                  Slide 12                                       ")
 print("=================================================================")
+
+# For Loop
 st = time.time()
 c = sum([x*y for x,y in zip(a,b)])
 et = time.time()
 for_loop_time = et - st
 print("For loop Sum: " , c)
 
+# Dot Product
 start = time.time()
 c = a.dot(b)
 end = time.time()
+dot_product_time = end - start
 print("Dot Product Sum: " , c)
 
-dot_product_time = end - start
-
+# Division by zero exclusion
 if for_loop_time == 0:
     speedup = "Negligible exec time using for loop"
 elif dot_product_time == 0:
@@ -28,6 +31,7 @@ elif dot_product_time == 0:
 else:
     speedup = for_loop_time/dot_product_time
 
+# Print Stats
 print("For loop time: ",for_loop_time)
 print("Dot Product time: ",dot_product_time)
 print("Speedup: ", speedup)
@@ -36,7 +40,7 @@ print("Speedup: ", speedup)
 print("=================================================================")
 print("                            Slide 13                             ")
 print("=================================================================")
-n = 1000000
+n = 10000
 a = [np.random.randint(1,1000000,n), np.random.randint(1,100000,n)]
 x = np.random.randint(1,100000,n)
 
