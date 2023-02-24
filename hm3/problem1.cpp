@@ -1,39 +1,61 @@
 #include <iostream>
-#include <iomanip>
 #include <cmath>
-#include <vector>
-#include <utility>
-
-#define MINX (-3)
-//MAXX Happens to be an upper bound for all zeroes of the function...
-#define MAXX (5)
-#define NUM_INTERVALS (pow(4, 9))
-#define NUM_BISECTION_ITERATIONS (30)
 
 using namespace std;
 
-double f(double x){
-    return 5 * x * exp(-x) * cos(x) + 1;
+double f(double x)
+{
+    return sin(3 * M_PI * cos(2 * M_PI * x)) * sin(M_PI * x);
 }
 
-double bisection_method(double x0, double x1){
-    for (unsigned int i = 0; i < NUM_BISECTION_ITERATIONS; i++){
-        double midpoint = 0.5*x0 + 0.5*x1;
-        f(x0) * f(midpoint) < 0 ? x1 = midpoint : x0 = midpoint;
-    }
-    return 0.5*x0 + 0.5*x1;
+double df(double x)
+{
+    return -2 * M_PI * sin(2 * M_PI * x) * sin(3 * M_PI * cos(2 * M_PI * x)) + 3 * M_PI * cos(2 * M_PI * x) * cos(3 * M_PI * cos(2 * M_PI * x)) * sin(M_PI * x);
 }
 
-int main(int argc, char** argv){
-    vector<pair<double, double>> relevant_intervals;
-    for (unsigned int i = 0; i < NUM_INTERVALS - 1; i++){
-        double x0 = MINX + (MAXX - MINX) / NUM_INTERVALS * (i);
-        double x1 = MINX + (MAXX - MINX) / NUM_INTERVALS * (i + 1);
-        if (f(x0) * f(x1) < 0)
-            relevant_intervals.push_back(make_pair(x0, x1));
+double newton(double (*f)(double), double (*df)(double), double x0, double tol=1e-6, int max_iter=100)
+{
+    // Iterate using Newton's method until the tolerance or maximum number of iterations is reached
+    for (int i = 0; i < max_iter; i++)
+    {
+        double fx = f(x0);
+        if (abs(fx) < tol)
+        {
+            return x0;
+        }
+        x0 = x0 - fx / df(x0);
     }
-    cout << fixed << setprecision(20);
-    for (const auto & x : relevant_intervals){
-        cout << "One solution is approximately " << bisection_method(x.first, x.second) << endl;
+    throw invalid_argument("No root was found within the maximum number of iterations.");
+}
+
+double fzero(double (*f)(double), double x0, double x1, double tol=1e-6, int max_iter=100)
+{
+    // Check that the function has different signs at the endpoints of the interval
+    if (f(x0) * f(x1) >= 0)
+    {
+        throw invalid_argument("Function must have different signs at endpoints of interval.");
     }
+
+    // Use the initial guess x0 as the starting point for Newton's method
+    double x = x0;
+    while (x < x1)
+    {
+        if (f(x) * f(x + tol) <= 0)
+        {
+            // Perform Newton's method starting at the midpoint of the bracketed interval
+            return newton(f, df, (x + x + tol) / 2, tol, max_iter);
+        }
+        x += tol;
+    }
+
+    throw invalid_argument("No root was found within the maximum number of iterations.");
+}
+
+int main()
+{
+    // Example usage: Find a root of the function f(x) = sin(3*pi*cos(2*pi*x))*sin(pi*x) within the interval [0, 1]
+    double root = fzero(f, -3, 5);
+    cout << "Approximate root of f(x) within [0, 1] is " << root << endl;
+
+    return 0;
 }
