@@ -1,24 +1,51 @@
-def has_five_letter_palindrome(s):
-    """Check if a string s contains a 5-letter palindrome."""
-    for i in range(len(s) - 4):
-        if s[i:i+5] == s[i:i+5][::-1]:
+import time
+from multiprocessing import Pool
+import os
+
+def has_five_letter_palindrome(string):
+    for i in range(len(string)-4):
+        substring = string[i:i+5]
+        if substring == substring[::-1]:
             return True
     return False
 
-def examine_strings(strings):
-    """Examine a list of strings and identify any subsets that contain a 5-letter palindrome."""
-    for s in strings:
-        for i in range(len(s)):
-            for j in range(i+1, len(s)+1):
-                subset = s[i:j]
-                if len(subset) >= 5 and has_five_letter_palindrome(subset):
-                    print(f"{subset} in string '{s}' contains a 5-letter palindrome")
+def examine_strings(string):
+    for i in range(len(string)):
+        for j in range(i+1, len(string)+1):
+            if has_five_letter_palindrome(string[i:j]):
+                return True
+    return False
 
-strings = ""
-with open("palindrome_str.txt") as file:
-   strings = file.read()
+def process_file(filename):
+    with open(filename, 'r') as file:
+        data = file.read()
+    found = examine_strings(data)
+    if found:
+        return 1
+    else:
+        return 0
 
-print(strings)
-examine_strings(strings)
+if __name__ == '__main__':
 
+    count = 0
+    start = time.time()
+    for i in range(1, 101):
+       count += process_file('palindrome_txts/{}.txt'.format(i))
+    end = time.time()
+    sequential_time = end - start
 
+    print("Palindromes Detected:" , count)
+    print("Sequential Elapsed Time:" , sequential_time)
+
+    start = time.time()
+    pool = Pool(os.cpu_count())
+    count = sum(pool.map(process_file, ['palindrome_txts/{}.txt'.format(i) for i in range(1, 101)]))
+    end = time.time()
+    parallel_time = end - start
+    speedup = sequential_time/parallel_time
+
+    print("Palindromes Detected:", count)
+    print("ParallelElapsed Time:", parallel_time)
+
+    print("Speed UP: ", speedup)
+    print("Efficiency : ", speedup/os.cpu_count())

@@ -1,17 +1,19 @@
 import numpy as np
 import time
 
-a = np.random.randint(1,500,10000)
-b = np.random.randint(1,500,10000)
+a = np.random.randint(1,700,100000)
+b = np.random.randint(1,700,100000)
 c = 0
 
 print("=================================================================")
 print("                  Slide 12                                       ")
 print("=================================================================")
 
+
 # For Loop
 st = time.time()
-c = sum([x*y for x,y in zip(a,b)])
+for i in range(0, len(a)):
+    c = c + a[i] * b[i]
 et = time.time()
 for_loop_time = et - st
 print("For loop Sum: " , c)
@@ -41,20 +43,29 @@ print("=================================================================")
 print("                            Slide 13                             ")
 print("=================================================================")
 n = 10000
-a = [np.random.randint(1,1000000,n), np.random.randint(1,100000,n)]
-x = np.random.randint(1,100000,n)
+a = np.random.randint(4,size=(n, n))
+x = np.random.randint(1,4,n)
 
 start = time.time()
-sum = sum([x*y for x,y in zip(x,a)])
+result = [] 
+for i in range(len(a)):
+    row = []
+    product = 0 
+    for v in range(len(a[i])):
+        product += a[i][v] * x[v]
+    row.append(product)
+        
+    result.append(row)
+
 end = time.time()
 
 for_loop_time = end - start
-print("For loop Sum: " , sum)
+print("For loop Sum: " , result[:4], "....")
 
 start = time.time()
-z = np.dot(a,x) 
+z = np.dot(a, x)
 end = time.time()
-print("For loop Dot Product: " , sum)
+print("For loop Dot Product: " , z[:4], "....")
 dot_product_time = end - start
 
 if for_loop_time == 0:
@@ -72,21 +83,32 @@ print("Speedup: ", speedup)
 print("=================================================================")
 print("                            Slide 14                           ")
 print("=================================================================")
-n = 4
-a = [np.random.randint(1,1000000,n), np.random.randint(1,100000,n)]
-b = [np.random.randint(1,1000000,n), np.random.randint(1,100000,n)]
+
+n = 1000
+a = np.random.randint(4,size=(n, n))
+b = np.random.randint(4,size=(n, n))
+result = [] 
 
 start = time.time()
-sum = sum([x*y for x,y in zip(b,a)])
+for i in range(len(a)):
+    row = [] 
+    for j in range(len(b[0])):
+        
+        product = 0 # the new element in the new row
+        for v in range(len(a[i])):
+            product += b[i][v] * b[v][j]
+        row.append(product) # append sum of product into the new row
+        
+    result.append(row) # append the new row into the final result
 end = time.time()
 
 for_loop_time = end - start
-print("For loop Sum: " , sum)
+print("For loop Sum: " , result[:1], "....")
 
 start = time.time()
-z = np.cross(a,b) 
+z = np.multiply(a,b) 
 end = time.time()
-print("For loop Dot Product: " , sum)
+print("Matrix Product Mul: " , z[:1], ".....")
 dot_product_time = end - start
 
 if for_loop_time == 0:
@@ -103,4 +125,25 @@ print("Speedup: ", speedup)
 print("=================================================================")
 print("                            Slide 15                           ")
 print("=================================================================")
+
+def for_loop_nbyn():
+    n = 1000
+    a = np.random.randint(4,size=(n, n))
+    b = np.random.randint(4,size=(n, n))
+    result = [] 
+
+    start = time.time()
+    for i in range(len(a)):
+
+        row = [] 
+        for j in range(len(b[0])):
+            
+            product = 0 # the new element in the new row
+            for v in range(len(a[i])):
+                product += b[i][v] * b[v][j]
+            row.append(product) # append sum of product into the new row
+            
+        result.append(row) # append the new row into the final result
+    end = time.time()
+
 

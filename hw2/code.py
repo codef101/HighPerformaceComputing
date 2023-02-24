@@ -9,7 +9,7 @@ def timeconsuming():
     return
 
 n = 40
-# Sequential
+
 start = time.time()
 for i in range(0, n):
     timeconsuming()
@@ -17,7 +17,6 @@ end = time.time()
 sequential_time = end - start
 print("Sequential Time Elapsed: " , sequential_time)
 
-# Parallel Processing
 q = queue.Queue()
 for i in range(n):
     q.put(i)
@@ -27,7 +26,7 @@ def worker():
         timeconsuming()
         q.task_done()
 
-cpus = multiprocessing.cpu_count() # Detect number of cores
+cpus = multiprocessing.cpu_count()
 print("Creating %d threads" % cpus)
 start = time.time()
 for i in range(cpus):
@@ -35,7 +34,7 @@ for i in range(cpus):
     t.daemon = True
     t.start()
 
-q.join() # Block until all tasks are done
+q.join()
 end = time.time()
 
 parallel_time = end - start
