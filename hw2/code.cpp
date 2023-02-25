@@ -4,34 +4,30 @@
 #include <vector>
 
 using namespace std;
-
-using namespace std::this_thread;     // sleep_for, sleep_until
-using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+using namespace std::this_thread;    
+using namespace std::chrono_literals; 
 using std::chrono::system_clock;
 
-void pauseExec()
+void timeconsuming()
 {
     sleep_for(5s);
 }
 
-void loopFunction(int n)
+void for_loop(int n)
 {
     for (int i = 0; i < n; i++)
     {
-        pauseExec();
+        timeconsuming();
     }
 }
 
-void spawnThreads(int n)
+void worker_threads(int n)
 {
     std::vector<thread> threads(4);
-
-    // spawn n threads:
     for (int i = 0; i < 4; i++)
     {
-        threads[i] = thread(pauseExec);
+        threads[i] = thread(timeconsuming);
     }
-
     for (auto &th : threads)
     {
         th.join();
@@ -42,12 +38,12 @@ int main()
 
     int n = 20;
     auto start = chrono::steady_clock::now();
-    loopFunction(n);
+    for_loop(n);
     auto end = chrono::steady_clock::now();
     auto sequential_time = end - start;
 
     start = chrono::steady_clock::now();
-    spawnThreads(n);
+    worker_threads(n);
     end = chrono::steady_clock::now();
     auto parallel_time = end - start;
 

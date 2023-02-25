@@ -1,6 +1,20 @@
 import time
 from multiprocessing import Pool
 import os
+import random
+
+def randomString():
+    letters = [random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(995)]
+    pos = random.randint(0, 994)
+    letters = letters[:pos] + ["A", "B", "C", "B", "A"] + letters[pos:]
+    return "".join(letters)
+
+def file_generator():
+    for i in range(1, 101):
+        file = open(str(i) + ".txt", "w")
+        randomTxt = randomString()
+        a = file.write(randomTxt)
+        file.close()
 
 def has_five_letter_palindrome(string):
     for i in range(len(string)-4):
@@ -27,6 +41,7 @@ def process_file(filename):
 
 if __name__ == '__main__':
 
+    
     count = 0
     start = time.time()
     for i in range(1, 101):
@@ -34,7 +49,7 @@ if __name__ == '__main__':
     end = time.time()
     sequential_time = end - start
 
-    print("Palindromes Detected:" , count)
+    print("Palindromes Found:" , count)
     print("Sequential Elapsed Time:" , sequential_time)
 
     start = time.time()
@@ -44,8 +59,8 @@ if __name__ == '__main__':
     parallel_time = end - start
     speedup = sequential_time/parallel_time
 
-    print("Palindromes Detected:", count)
+    print("Palindromes Found:", count)
     print("ParallelElapsed Time:", parallel_time)
 
-    print("Speed UP: ", speedup)
+    print("Speed Up: ", speedup)
     print("Efficiency : ", speedup/os.cpu_count())

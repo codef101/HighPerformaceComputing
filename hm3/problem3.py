@@ -40,7 +40,7 @@ if __name__ == '__main__':
     solutions = pool.map(solve_ode, epsilon_values)
     end = time.time()
     parallel_time = end - start
-    print("ParallelElapsed Time:", parallel_time)
+    print("Paralle Elapsed Time:", parallel_time)
 
     #Stats 
     speedup = sequential_time/parallel_time
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     print("Efficiency : ", speedup/os.cpu_count())
 
     for i in range(len(epsilon_values)):
-     plt.plot(t, solutions[i][:, 0], label=f'epsilon={epsilon_values[i]}')
+     plt.plot(t, solutions[i][:, 0])
 
     plt.xlabel('t')
     plt.ylabel('x(t)')
